@@ -41,7 +41,8 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
-    //TODO return error message
+    const errorMessage = encodeURIComponent(error.message || "Sign up failed");
+    redirect(`/login?error=${errorMessage}`);
   }
 
   revalidatePath("/", "layout");
