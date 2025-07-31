@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
@@ -50,10 +51,12 @@ export default function Admin() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-blue-800 font-medium">
+            Loading STI Portal...
+          </p>
         </div>
       </div>
     );
@@ -65,40 +68,97 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Admin Dashboard
-          </h2>
-          <div className="mt-8 space-y-4">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Welcome!
-              </h3>
-              <p className="text-sm text-gray-600">
-                <strong>Email:</strong> {user.email}
-              </p>
-              {user.user_metadata?.name && (
-                <p className="text-sm text-gray-600">
-                  <strong>Name:</strong> {user.user_metadata.name}
-                </p>
-              )}
-              <p className="text-sm text-gray-600">
-                <strong>ID:</strong> {user.id}
-              </p>
-              <p className="text-sm text-gray-600">
-                <strong>Last login:</strong>{" "}
-                {new Date(user.last_sign_in_at || "").toLocaleString()}
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-blue-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                <span className="text-white font-bold text-sm">STI</span>
+              </div>
+              <h1 className="text-xl font-bold text-blue-900">
+                Campus Entry Monitor
+              </h1>
             </div>
-
-            <button
+            <Button
               onClick={handleLogout}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              className="py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
             >
               Logout
-            </button>
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex items-center justify-center py-12 px-4">
+        <div className="max-w-2xl w-full space-y-8">
+          <div className="bg-white rounded-lg shadow-xl p-8 border-t-4 border-blue-600">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-extrabold text-blue-900 mb-2">
+                Admin Dashboard
+              </h2>
+              <p className="text-blue-600">STI College Security Management</p>
+            </div>
+
+            {/* User Info Card */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+              <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center">
+                <span className="w-5 h-5 bg-blue-600 rounded-full mr-2"></span>
+                Administrator Information
+              </h3>
+              <div className="space-y-2 text-sm">
+                <p className="text-blue-800">
+                  <strong className="font-medium">Email:</strong> {user.email}
+                </p>
+                {user.user_metadata?.name && (
+                  <p className="text-blue-800">
+                    <strong className="font-medium">Name:</strong>{" "}
+                    {user.user_metadata.name}
+                  </p>
+                )}
+                <p className="text-blue-800">
+                  <strong className="font-medium">User ID:</strong> {user.id}
+                </p>
+                <p className="text-blue-800">
+                  <strong className="font-medium">Last login:</strong>{" "}
+                  {new Date(user.last_sign_in_at || "").toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <h4 className="font-semibold text-blue-900 mb-2">Entry Logs</h4>
+                <p className="text-sm text-blue-600 mb-3">
+                  View campus entry records
+                </p>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  View Logs
+                </Button>
+              </div>
+
+              <div className="bg-white border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <h4 className="font-semibold text-blue-900 mb-2">
+                  User Management
+                </h4>
+                <p className="text-sm text-blue-600 mb-3">
+                  Manage system users
+                </p>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  Manage Users
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="text-center">
+            <p className="text-xs text-blue-600">
+              © 2025 STI College. All rights reserved.
+            </p>
           </div>
         </div>
       </div>

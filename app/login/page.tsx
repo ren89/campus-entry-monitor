@@ -1,81 +1,107 @@
 "use client";
+import Input from "@/components/customComponent/Input";
+import Card from "@/components/customComponent/Card";
+import Button from "@/components/customComponent/Button";
 import { login } from "./action";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 
 function LoginForm() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+
+    try {
+      await login(formData);
+    } catch (error) {
+      console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // STI Logo component
+  const stiLogo = (
+    <div className="flex justify-center">
+      <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+        <span className="text-white font-bold text-xl">STI</span>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Campus Entry Monitor
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Please sign in to continue
-          </p>
-        </div>
-
-        {error && (
-          <div className="rounded-md bg-red-50 p-4">
-            <div className="flex">
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">
-                  Authentication Error
-                </h3>
-                <div className="mt-2 text-sm text-red-700">
-                  <p>{decodeURIComponent(error)}</p>
+        <Card
+          header={stiLogo}
+          title="Campus Entry Monitor"
+          description="Sign in to your STI account"
+          className="border-t-4 border-t-blue-600 shadow-xl"
+        >
+          {error && (
+            <div className="rounded-lg bg-red-50 border border-red-200 p-4 mb-6">
+              <div className="flex">
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">
+                    Authentication Error
+                  </h3>
+                  <div className="mt-2 text-sm text-red-700">
+                    <p>{decodeURIComponent(error)}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <form className="mt-8 space-y-6">
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <Input
                 id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                placeholder="Enter your email address"
+                label="Email Address"
+                disabled={isLoading}
               />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
+              <Input
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder="Enter your password"
+                label="Password"
+                disabled={isLoading}
               />
             </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              formAction={login}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Sign in
-            </button>
-          </div>
-        </form>
+            <div>
+              <Button
+                type="submit"
+                isLoading={isLoading}
+                loadingText="Signing in..."
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Sign in
+              </Button>
+            </div>
+          </form>
+        </Card>
+
+        {/* Footer */}
+        <div className="text-center">
+          <p className="text-xs text-blue-600">
+            © 2025 STI College. All rights reserved.
+          </p>
+        </div>
       </div>
     </div>
   );
