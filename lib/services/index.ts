@@ -1,0 +1,1 @@
+export { EntryRecordService } from "./entryRecordsService";
