@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Input from "@/components/customComponent/Input";
-import Card from "@/components/customComponent/Card";
-import Button from "@/components/customComponent/Button";
+import Input from "@/components/shared/Input";
+import Card from "@/components/shared/Card";
+import Button from "@/components/shared/Button";
 import { APP_CONFIG } from "@/lib/constants";
+import Logo from "@/components/shared/Logo";
 
 interface LoginFormProps {
   onSubmit: (formData: FormData) => Promise<void>;
@@ -30,22 +31,11 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
     }
   };
 
-  // STI Logo component
-  const stiLogo = (
-    <div className="flex justify-center">
-      <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-        <span className="text-white font-bold text-xl">
-          {APP_CONFIG.shortName}
-        </span>
-      </div>
-    </div>
-  );
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
       <div className="max-w-md w-full space-y-8">
         <Card
-          header={stiLogo}
+          header={<Logo />}
           title={APP_CONFIG.name}
           description="Sign in to your STI account"
           className="border-t-4 border-t-blue-600 shadow-xl"

@@ -9,6 +9,7 @@ export const EntrySystemCard = () => {
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
+            {/* TODO: use Icon */}
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

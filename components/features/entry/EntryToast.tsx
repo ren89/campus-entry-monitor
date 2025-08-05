@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { formatDateReadable } from "@/lib/utils";
 
 interface EntryToastProps {
   isVisible: boolean;
@@ -84,6 +85,7 @@ export const EntryToast = ({
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
+                    {/* TODO: use Icon */}
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -179,7 +181,7 @@ export const EntryToast = ({
               className="text-center mt-4"
             >
               <p className="text-sm text-gray-500">
-                {new Date().toLocaleString()}
+                {formatDateReadable(new Date().toISOString())}
               </p>
             </motion.div>
           </div>

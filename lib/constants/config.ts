@@ -1,12 +1,8 @@
-// Default user data for RFID entries
 export const DEFAULT_USER = {
   fullName: "John Doe",
   room: "A-101",
   avatar: null,
 } as const;
-
-// Toast configuration
-export const TOAST_DURATION = 3500;
 
 // RFID configuration
 export const RFID_CONFIG = {
