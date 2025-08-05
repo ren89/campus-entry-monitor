@@ -1,16 +1,13 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { EntryRecordService } from "@/lib/services";
 import { useRFIDScanner } from "@/lib/hooks";
 import { EntrySystemCard, EntryToast } from "@/components/features/entry";
-import { Header, Footer } from "@/components/layout";
-import { DEFAULT_USER, ROUTES } from "@/lib/constants";
+import { DEFAULT_USER } from "@/lib/constants";
 import { formatRfidId } from "@/lib/utils";
 import type { ToastData } from "@/lib/types";
 
 export default function Home() {
-  const router = useRouter();
   const [toastData, setToastData] = useState<ToastData | null>(null);
 
   const handleRFIDScan = async (rfidData: string) => {
@@ -18,17 +15,16 @@ export default function Home() {
       const formattedId = formatRfidId(rfidData);
 
       await EntryRecordService.create({
-        name: formattedId, // Use RFID ID as the name
+        name: formattedId, // TODO: update to use actual user data
       });
 
-      // Show success toast with default user data
+      // TODO: update to use actual user data
       setToastData({
         rfidId: formattedId,
         fullName: DEFAULT_USER.fullName,
         room: DEFAULT_USER.room,
       });
     } catch (error) {
-      // Show error using custom toast
       setToastData({
         rfidId: formatRfidId(rfidData),
         isError: true,
@@ -43,25 +39,16 @@ export default function Home() {
     setToastData(null);
   };
 
-  const handleAdminClick = () => {
-    router.push(ROUTES.LOGIN);
-  };
-
   useRFIDScanner({ onScan: handleRFIDScan });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
-      <Header onAdminClick={handleAdminClick} />
-
+    <>
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <EntrySystemCard />
         </div>
-
-        <Footer />
       </div>
 
-      {/* Toast Component */}
       <EntryToast
         isVisible={!!toastData}
         rfidId={toastData?.rfidId || ""}
@@ -72,6 +59,6 @@ export default function Home() {
         errorMessage={toastData?.errorMessage}
         onClose={handleToastClose}
       />
-    </div>
+    </>
   );
 }

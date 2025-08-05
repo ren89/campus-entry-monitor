@@ -2,5 +2,4 @@
 export * from "./database";
 export * from "./rfid";
 
-// Re-export validation types
-export type { EntryRecord, RfidEntry, ToastData } from "@/lib/validations";
+export type { RfidEntry, ToastData } from "@/lib/validations";
