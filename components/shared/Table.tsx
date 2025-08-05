@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface DataTableProps<T extends Record<string, any>> {
   data: T[];
   onRowClick?: (row: T, index: number) => void;
@@ -25,6 +26,7 @@ export interface DataTableProps<T extends Record<string, any>> {
   onGlobalFilterChange?: (value: string) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Table<T extends Record<string, any>>({
   data,
   onRowClick,
