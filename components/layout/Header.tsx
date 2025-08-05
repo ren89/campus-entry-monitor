@@ -13,7 +13,7 @@ export const Header = ({
   showRfidStatus = true,
 }: HeaderProps) => {
   const isAdmin = variant === "admin";
-  
+
   return (
     <div className="bg-white shadow-sm border-b border-blue-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,11 +39,7 @@ export const Header = ({
           {onButtonClick && (
             <Button
               onClick={onButtonClick}
-              className={`py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                isAdmin
-                  ? "bg-red-600 hover:bg-red-700 focus:ring-red-500"
-                  : "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
-              }`}
+              className={`py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500`}
             >
               {isAdmin ? "Logout" : "Login"}
             </Button>
