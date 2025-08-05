@@ -19,13 +19,8 @@ export const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   const isAdminPage = pathname === ROUTES.ADMIN;
   const shouldShow = !isLoginPage;
 
-  const handleHeaderButtonClick = async () => {
-    if (isAdminPage) {
-      await supabase.auth.signOut();
-      router.push(ROUTES.HOME);
-    } else {
-      router.push(ROUTES.LOGIN);
-    }
+  const handleLoginButton = async () => {
+    router.push(ROUTES.LOGIN);
   };
 
   return (
@@ -33,7 +28,7 @@ export const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
       {shouldShow && (
         <Header
           variant={isAdminPage ? "admin" : "home"}
-          onButtonClick={handleHeaderButtonClick}
+          onButtonClick={isAdminPage ? undefined : handleLoginButton}
           showRfidStatus={!isAdminPage}
         />
       )}
