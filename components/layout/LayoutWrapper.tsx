@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { ROUTES } from "@/lib/constants";
+import { Toaster } from "@/components/ui/sonner";
 
 interface LayoutWrapperProps {
   children: React.ReactNode;
@@ -36,6 +37,7 @@ export const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
         {children}
       </div>
       {shouldShow && <Footer />}
+      <Toaster />
     </div>
   );
 };
