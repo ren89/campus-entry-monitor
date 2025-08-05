@@ -1,35 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table } from "@/components/shared";
-
-interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  userType: string;
-}
-
-const users: User[] = [
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-    userType: "staff",
-  },
-  {
-    id: 2,
-    firstName: "Jane",
-    lastName: "Smith",
-    email: "jane@example.com",
-    userType: "student",
-  },
-];
+import { Table, Modal, StatsCards } from "@/components/shared";
+import { User } from "@/lib/types";
+import { UserService } from "@/lib/services";
+import { useUserStats } from "@/lib/hooks";
+import { UserForm } from "../UserForm";
+import { UserFormData } from "@/lib/validations/user";
+import { toast } from "sonner";
 
 export function UserScreen() {
   const [searchFilter, setSearchFilter] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const userStats = useUserStats(users);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const users = await UserService.getAll();
+      setUsers(users);
+    };
+
+    fetchUsers();
+  }, []);
+
+  const handleAddUser = () => {
+    setSelectedUser(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleUserSubmit = async (userData: UserFormData) => {
+    setIsLoading(true);
+    try {
+      if (selectedUser) {
+        // Update existing user
+        await UserService.update(selectedUser.id!, userData);
+        toast.success("User updated successfully!");
+        console.log("User updated successfully");
+      } else {
+        // Create new user
+        await UserService.create(userData);
+        toast.success("User created successfully!");
+        console.log("User created successfully");
+      }
+
+      // Refresh users list
+      const updatedUsers = await UserService.getAll();
+      setUsers(updatedUsers);
+
+      handleModalClose();
+    } catch (error) {
+      console.error("Error saving user:", error);
+      toast.error("Error saving user. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -38,7 +77,7 @@ export function UserScreen() {
           User Management
         </h1>
         <p className="text-muted-foreground mt-2">
-          Manage users and their access permissions
+          Manage users and their details
         </p>
       </div>
 
@@ -51,38 +90,33 @@ export function UserScreen() {
             className="w-full"
           />
         </div>
-        <Button>Add New User</Button>
+        <Button onClick={handleAddUser}>Add New User</Button>
       </div>
 
       <Table
         data={users}
-        onRowClick={(user) => console.log("Clicked user:", user)}
+        onRowClick={handleEditUser}
         globalFilter={searchFilter}
         onGlobalFilterChange={setSearchFilter}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-card-foreground mb-2">
-            Total Users
-          </h3>
-          <p className="text-3xl font-bold text-primary">156</p>
-        </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        title={selectedUser ? "Edit User" : "Add New User"}
+        subtitle={
+          selectedUser ? "Update user information" : "Create a new user account"
+        }
+      >
+        <UserForm
+          user={selectedUser || undefined}
+          onSubmit={handleUserSubmit}
+          onCancel={handleModalClose}
+          isLoading={isLoading}
+        />
+      </Modal>
 
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-card-foreground mb-2">
-            Active Users
-          </h3>
-          <p className="text-3xl font-bold text-green-600">142</p>
-        </div>
-
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-card-foreground mb-2">
-            New This Month
-          </h3>
-          <p className="text-3xl font-bold text-blue-600">12</p>
-        </div>
-      </div>
+      <StatsCards cards={userStats} />
     </div>
   );
 }

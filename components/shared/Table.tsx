@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { formatDateReadable } from "@/lib/utils/format";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface DataTableProps<T extends Record<string, any>> {
@@ -36,11 +37,28 @@ export function Table<T extends Record<string, any>>({
   const columns = useMemo<ColumnDef<T>[]>(() => {
     if (data.length === 0) return [];
 
-    return Object.keys(data[0]).map((key) => ({
-      accessorKey: key,
-      header: key.replace(/([A-Z])/g, " $1").trim(),
-      cell: ({ getValue }) => String(getValue() ?? ""),
-    }));
+    return Object.keys(data[0])
+      .filter((key) => key.toLowerCase() !== "id") // Hide id column
+      .map((key) => ({
+        accessorKey: key,
+        header: key
+          .replace(/([A-Z])/g, " $1")
+          .replace(/created_at/i, "Created")
+          .replace(/updated_at/i, "Updated")
+          .trim(),
+        cell: ({ getValue }) => {
+          const value = getValue();
+          // Format date fields
+          if (
+            key.includes("created_at") ||
+            key.includes("updated_at") ||
+            key.includes("date")
+          ) {
+            return value ? formatDateReadable(String(value)) : "";
+          }
+          return String(value ?? "");
+        },
+      }));
   }, [data]);
 
   const table = useReactTable({
