@@ -1,7 +1,11 @@
 export interface EntryRecord {
-  id: number;
+  id?: string;
+  created_at?: string;
   name: string;
-  created_at: string;
+  rfid: string;
+  action: "Entry" | "Exit";
+  location: string;
+  user_id: string;
 }
 
 export interface User {
@@ -14,4 +18,5 @@ export interface User {
   guardianPhoneNumber: string;
   rfid: string;
   created_at?: string;
+  nextAction?: string;
 }

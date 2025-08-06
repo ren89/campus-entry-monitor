@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Table, Modal, StatsCards } from "@/components/shared";
 import { User } from "@/lib/types";
 import { UserService } from "@/lib/services";
-import { useUserStats } from "@/lib/hooks";
+import { useStats } from "@/lib/hooks";
 import { UserForm } from "../UserForm";
 import { UserFormData } from "@/lib/validations/user";
 import { toast } from "sonner";
@@ -16,7 +16,7 @@ export function UserScreen() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const userStats = useUserStats(users);
+  const userStats = useStats({ users, type: "users" });
 
   useEffect(() => {
     const fetchUsers = async () => {

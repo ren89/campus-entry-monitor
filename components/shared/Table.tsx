@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { formatDateReadable } from "@/lib/utils/format";
+import { formatDateReadable, formatTimestamp } from "@/lib/utils/format";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface DataTableProps<T extends Record<string, any>> {
@@ -38,7 +38,9 @@ export function Table<T extends Record<string, any>>({
     if (data.length === 0) return [];
 
     return Object.keys(data[0])
-      .filter((key) => key.toLowerCase() !== "id") // Hide id column
+      .filter(
+        (key) => key.toLowerCase() !== "id" && key.toLowerCase() !== "user_id"
+      ) // Hide id and user_id columns
       .map((key) => ({
         accessorKey: key,
         header: key
@@ -48,12 +50,32 @@ export function Table<T extends Record<string, any>>({
           .trim(),
         cell: ({ getValue }) => {
           const value = getValue();
-          // Format date fields
-          if (
-            key.includes("created_at") ||
-            key.includes("updated_at") ||
-            key.includes("date")
-          ) {
+
+          // Special styling for action column
+          if (key.toLowerCase() === "action") {
+            const action = String(value ?? "");
+            if (action.toLowerCase() === "entry") {
+              return (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Entry
+                </span>
+              );
+            } else if (action.toLowerCase() === "exit") {
+              return (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  Exit
+                </span>
+              );
+            }
+            return action;
+          }
+
+          // Format date fields with specific format for created_at
+          if (key.includes("created_at")) {
+            return value ? formatTimestamp(String(value)) : "";
+          }
+          // Format other date fields
+          if (key.includes("updated_at") || key.includes("date")) {
             return value ? formatDateReadable(String(value)) : "";
           }
           return String(value ?? "");

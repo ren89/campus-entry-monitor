@@ -1,12 +1,18 @@
 import { createClient } from "../supabase/client";
-import type { User } from "../types/database";
+import type { EntryRecord, User, UserRow, UserRFIDRow } from "../types";
 import { UserFormData } from "../validations/user";
 
 export class UserService {
   static async getAll(): Promise<User[]> {
     const supabase = createClient();
 
-    const { data: users, error } = await supabase
+    const {
+      data: users,
+      error,
+    }: {
+      data: UserRow[] | null;
+      error: Error | null;
+    } = await supabase
       .from("users")
       .select(
         "id, first_name, last_name, email, user_type, phone_number, guardian_phone_number, rfid, created_at"
@@ -17,7 +23,6 @@ export class UserService {
       console.error("Error fetching users:", error);
       return [];
     }
-    console.log("Fetched users:", users);
 
     return (
       users?.map((user) => ({
@@ -37,7 +42,13 @@ export class UserService {
   static async create(userData: UserFormData): Promise<User> {
     const supabase = createClient();
 
-    const { data, error } = await supabase
+    const {
+      data,
+      error,
+    }: {
+      data: UserRow | null;
+      error: Error | null;
+    } = await supabase
       .from("users")
       .insert({
         first_name: userData.firstName,
@@ -51,9 +62,9 @@ export class UserService {
       .select()
       .single();
 
-    if (error) {
+    if (error || !data) {
       console.error("Error creating user:", error);
-      throw error;
+      throw error || new Error("Failed to create user");
     }
 
     return {
@@ -72,7 +83,13 @@ export class UserService {
   static async update(id: string, userData: UserFormData): Promise<User> {
     const supabase = createClient();
 
-    const { data, error } = await supabase
+    const {
+      data,
+      error,
+    }: {
+      data: UserRow | null;
+      error: Error | null;
+    } = await supabase
       .from("users")
       .update({
         first_name: userData.firstName,
@@ -87,9 +104,9 @@ export class UserService {
       .select()
       .single();
 
-    if (error) {
+    if (error || !data) {
       console.error("Error updating user:", error);
-      throw error;
+      throw error || new Error("Failed to update user");
     }
 
     return {
@@ -105,14 +122,52 @@ export class UserService {
     };
   }
 
-  static async delete(id: number): Promise<void> {
+  static async getByRFID(rfid: string): Promise<Partial<EntryRecord> | null> {
     const supabase = createClient();
 
-    const { error } = await supabase.from("users").delete().eq("id", id);
+    const {
+      data,
+      error,
+    }: {
+      data: UserRFIDRow | null;
+      error: Error | null;
+    } = await supabase
+      .from("users")
+      .select(
+        "id, first_name, last_name, email, guardian_phone_number, rfid, created_at, next_action"
+      )
+      .eq("rfid", rfid)
+      .single();
+
+    if (error || !data) {
+      console.warn("No user found with the provided RFID");
+      return null;
+    }
+
+    return {
+      name: `${data.first_name} ${data.last_name}`,
+      user_id: data.id,
+      rfid: data.rfid,
+      action: data.next_action,
+    };
+  }
+
+  static async updateNextAction(
+    rfid: string,
+    nextAction: string
+  ): Promise<boolean> {
+    const supabase = createClient();
+
+    const { error }: { error: Error | null } = await supabase
+      .from("users")
+      .update({ next_action: nextAction })
+      .eq("rfid", rfid);
 
     if (error) {
-      console.error("Error deleting user:", error);
-      throw error;
+      console.error("Error updating user's next action:", error);
+      return false;
     }
+
+    return true;
   }
 }

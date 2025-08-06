@@ -139,7 +139,7 @@ export const EntryToast = ({
                   <p className="text-lg font-medium text-gray-900 mb-2">
                     Failed to process RFID
                   </p>
-                  <p className="text-sm text-gray-600 mb-1">ID: {rfidId}</p>
+                  <p className="text-sm text-gray-600 mb-1">RFID: {rfidId}</p>
                   {errorMessage && (
                     <p className="text-xs text-red-500">{errorMessage}</p>
                   )}

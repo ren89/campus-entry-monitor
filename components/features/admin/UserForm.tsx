@@ -195,10 +195,10 @@ export function UserForm({
           onChange={(e) =>
             handleInputChange("guardianPhoneNumber", e.target.value)
           }
-          required={false}
+          required
           disabled={isLoading}
           className={errors.guardianPhoneNumber ? "border-red-500" : ""}
-          placeholder="09123456789 (Optional)"
+          placeholder="09123456789"
           maxLength={11}
         />
         {errors.guardianPhoneNumber && (

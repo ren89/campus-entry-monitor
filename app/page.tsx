@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
-import { EntryRecordService } from "@/lib/services";
+import { EntryRecordService, UserService } from "@/lib/services";
 import { useRFIDScanner } from "@/lib/hooks";
 import { EntrySystemCard, EntryToast } from "@/components/features/entry";
-import { DEFAULT_USER } from "@/lib/constants";
 import { formatRfidId } from "@/lib/utils";
 import type { ToastData } from "@/lib/types";
 
@@ -14,15 +13,21 @@ export default function Home() {
     try {
       const formattedId = formatRfidId(rfidData);
 
-      await EntryRecordService.create({
-        name: formattedId, // TODO: update to use actual user data
-      });
+      const res = await EntryRecordService.create(formattedId);
 
-      // TODO: update to use actual user data
+      if (!res) {
+        setToastData({
+          rfidId: formattedId,
+          isError: true,
+          errorMessage: "User not found or entry could not be recorded.",
+        });
+        return;
+      }
+
       setToastData({
         rfidId: formattedId,
-        fullName: DEFAULT_USER.fullName,
-        room: DEFAULT_USER.room,
+        fullName: res?.name,
+        room: res?.location,
       });
     } catch (error) {
       setToastData({

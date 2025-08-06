@@ -1,17 +1,21 @@
+import { User } from "lucide-react";
 import { createClient } from "../supabase/client";
-import type { EntryRecord } from "../types/database";
-
-export interface CreateEntryRecord {
-  name: string;
-}
+import type { EntryRecord, EntryRecordRow } from "../types";
+import { UserService } from "./userService";
 
 export class EntryRecordService {
   static async getAll(): Promise<EntryRecord[]> {
     const supabase = createClient();
 
-    const { data: logs, error } = await supabase
+    const {
+      data: logs,
+      error,
+    }: {
+      data: EntryRecordRow[] | null;
+      error: Error | null;
+    } = await supabase
       .from("entry_records")
-      .select("id, name, created_at")
+      .select("id, name, created_at, location, action, rfid, user_id")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -19,30 +23,75 @@ export class EntryRecordService {
       return [];
     }
 
-    return logs || [];
+    return (
+      logs?.map((log) => {
+        return {
+          id: log.id,
+          created_at: log.created_at,
+          name: log.name,
+          rfid: log.rfid,
+          action: log.action,
+          location: log.location,
+          user_id: log.user_id,
+        };
+      }) || []
+    );
   }
 
-  static async create(data: CreateEntryRecord): Promise<EntryRecord | null> {
+  static async create(rfid: string): Promise<Partial<EntryRecord> | null> {
     const supabase = createClient();
 
-    const { data: newLog, error } = await supabase
+    const user = await UserService.getByRFID(rfid);
+
+    if (!user) {
+      console.error("User not found");
+      return null;
+    }
+
+    const {
+      data: newLog,
+      error,
+    }: {
+      data: Pick<
+        EntryRecordRow,
+        "id" | "name" | "created_at" | "action"
+      > | null;
+      error: Error | null;
+    } = await supabase
       .from("entry_records")
-      .insert(data)
-      .select("id, name, created_at")
+      .insert({
+        name: user?.name,
+        created_at: new Date().toISOString(),
+        rfid: rfid,
+        action: user?.action,
+        location: "Default Location", // Replace with actual location logic
+        user_id: user?.user_id,
+      })
+      .select("id, name, created_at, action")
       .single();
 
-    if (error) {
+    const res = UserService.updateNextAction(
+      rfid,
+      newLog?.action === "Entry" ? "Exit" : "Entry"
+    );
+    console.log("Updated next action:", res);
+
+    if (error || !newLog) {
       console.error("Error creating entry log:", error);
       return null;
     }
 
-    return newLog;
+    return {
+      name: newLog.name,
+      created_at: newLog.created_at,
+      action: newLog.action,
+    };
   }
 
   static async delete(id: string): Promise<boolean> {
     const supabase = createClient();
 
-    const { error } = await supabase
+    const { error }: { error: Error | null } = await supabase
       .from("entry_records")
       .delete()
       .eq("id", id);

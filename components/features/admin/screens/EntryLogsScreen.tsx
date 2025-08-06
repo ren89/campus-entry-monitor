@@ -1,8 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Table } from "@/components/shared/Table";
+import { StatsCards } from "@/components/shared/StatsCards";
+import { useEntryStats } from "@/lib/hooks";
+import { EntryRecordService } from "@/lib/services/entryRecordsService";
+import type { EntryRecord } from "@/lib/types";
 
 export function EntryLogsScreen() {
+  const [entryLogs, setEntryLogs] = useState<EntryRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [globalFilter, setGlobalFilter] = useState("");
+
+  const entryStatsCards = useEntryStats(entryLogs);
+
+  console.log("EntryLogsScreen rendered", entryLogs);
+  useEffect(() => {
+    const fetchEntryLogs = async () => {
+      try {
+        setLoading(true);
+        const logs = await EntryRecordService.getAll();
+        setEntryLogs(logs);
+      } catch (error) {
+        console.error("Error fetching entry logs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEntryLogs();
+  }, []);
   return (
     <div className="space-y-6">
       <div className="mb-8">
@@ -29,10 +56,11 @@ export function EntryLogsScreen() {
             <label className="block text-sm font-medium text-card-foreground mb-2">
               User Search
             </label>
-            <Input placeholder="Search by name or RFID..." />
-          </div>
-          <div className="flex items-end">
-            <Button className="w-full">Apply Filters</Button>
+            <Input
+              placeholder="Search by name or RFID..."
+              value={globalFilter}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+            />
           </div>
         </div>
       </div>
@@ -43,163 +71,23 @@ export function EntryLogsScreen() {
             <h3 className="text-lg font-semibold text-card-foreground">
               Recent Entries
             </h3>
-            <Button variant="outline" size="sm">
-              Export Logs
-            </Button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 text-sm font-medium text-muted-foreground">
-                    Timestamp
-                  </th>
-                  <th className="text-left py-3 text-sm font-medium text-muted-foreground">
-                    User
-                  </th>
-                  <th className="text-left py-3 text-sm font-medium text-muted-foreground">
-                    RFID
-                  </th>
-                  <th className="text-left py-3 text-sm font-medium text-muted-foreground">
-                    Action
-                  </th>
-                  <th className="text-left py-3 text-sm font-medium text-muted-foreground">
-                    Location
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-border">
-                  <td className="py-3 text-sm text-card-foreground">
-                    2024-03-15 14:30:25
-                  </td>
-                  <td className="py-3 text-sm text-card-foreground">
-                    John Doe
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    RF001234
-                  </td>
-                  <td className="py-3">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Entry
-                    </span>
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    Main Gate
-                  </td>
-                </tr>
-                <tr className="border-b border-border">
-                  <td className="py-3 text-sm text-card-foreground">
-                    2024-03-15 14:25:18
-                  </td>
-                  <td className="py-3 text-sm text-card-foreground">
-                    Jane Smith
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    RF005678
-                  </td>
-                  <td className="py-3">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                      Exit
-                    </span>
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    Main Gate
-                  </td>
-                </tr>
-                <tr className="border-b border-border">
-                  <td className="py-3 text-sm text-card-foreground">
-                    2024-03-15 14:20:45
-                  </td>
-                  <td className="py-3 text-sm text-card-foreground">
-                    Bob Johnson
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    RF009012
-                  </td>
-                  <td className="py-3">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Entry
-                    </span>
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    Side Gate
-                  </td>
-                </tr>
-                <tr className="border-b border-border">
-                  <td className="py-3 text-sm text-card-foreground">
-                    2024-03-15 14:15:32
-                  </td>
-                  <td className="py-3 text-sm text-card-foreground">
-                    Alice Wilson
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    RF003456
-                  </td>
-                  <td className="py-3">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Entry
-                    </span>
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    Main Gate
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3 text-sm text-card-foreground">
-                    2024-03-15 14:10:15
-                  </td>
-                  <td className="py-3 text-sm text-card-foreground">
-                    Mike Brown
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    RF007890
-                  </td>
-                  <td className="py-3">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                      Exit
-                    </span>
-                  </td>
-                  <td className="py-3 text-sm text-muted-foreground">
-                    Main Gate
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          {loading ? (
+            <div className="flex justify-center items-center h-32">
+              <p className="text-muted-foreground">Loading entry logs...</p>
+            </div>
+          ) : (
+            <Table
+              data={entryLogs}
+              globalFilter={globalFilter}
+              onGlobalFilterChange={setGlobalFilter}
+            />
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-card-foreground mb-2">
-            Total Entries Today
-          </h3>
-          <p className="text-3xl font-bold text-green-600">89</p>
-        </div>
-
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-card-foreground mb-2">
-            Total Exits Today
-          </h3>
-          <p className="text-3xl font-bold text-red-600">53</p>
-        </div>
-
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-card-foreground mb-2">
-            Currently Inside
-          </h3>
-          <p className="text-3xl font-bold text-blue-600">36</p>
-        </div>
-
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-card-foreground mb-2">
-            Peak Time
-          </h3>
-          <p className="text-xl font-bold text-purple-600">8:30 AM</p>
-        </div>
-      </div>
+      <StatsCards cards={entryStatsCards} columns={4} />
     </div>
   );
 }
