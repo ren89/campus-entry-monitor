@@ -10,7 +10,7 @@ export function useEntryStats(entryLogs: EntryRecord[]): StatCard[] {
       const recordDate = new Date(record.created_at || "")
         .toISOString()
         .split("T")[0];
-      return recordDate === today && record.location === "Default Location";
+      return recordDate === today && record.location === "Main Entrance";
     });
 
     const entries = todayRecords.filter((record) => record.action === "Entry");
