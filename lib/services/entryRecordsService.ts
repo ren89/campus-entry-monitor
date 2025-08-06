@@ -1,4 +1,3 @@
-import { User } from "lucide-react";
 import { createClient } from "../supabase/client";
 import type { EntryRecord, EntryRecordRow } from "../types";
 import { UserService } from "./userService";
@@ -38,9 +37,11 @@ export class EntryRecordService {
     );
   }
 
-  static async create(rfid: string): Promise<Partial<EntryRecord> | null> {
+  static async create(
+    rfid: string,
+    assignedRoom: string
+  ): Promise<Partial<EntryRecord> | null> {
     const supabase = createClient();
-
     const user = await UserService.getByRFID(rfid);
 
     if (!user) {
@@ -64,17 +65,16 @@ export class EntryRecordService {
         created_at: new Date().toISOString(),
         rfid: rfid,
         action: user?.action,
-        location: "Default Location", // Replace with actual location logic
+        location: assignedRoom,
         user_id: user?.user_id,
       })
-      .select("id, name, created_at, action")
+      .select("id, name, created_at, action, location")
       .single();
 
     const res = UserService.updateNextAction(
       rfid,
       newLog?.action === "Entry" ? "Exit" : "Entry"
     );
-    console.log("Updated next action:", res);
 
     if (error || !newLog) {
       console.error("Error creating entry log:", error);
@@ -84,6 +84,7 @@ export class EntryRecordService {
     return {
       name: newLog.name,
       created_at: newLog.created_at,
+      location: assignedRoom,
       action: newLog.action,
     };
   }

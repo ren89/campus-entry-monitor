@@ -1,7 +1,3 @@
-// Database row types (snake_case as stored in database)
-// These represent the actual structure returned from Supabase queries
-
-// User table row types
 export interface UserRow {
   id: string;
   first_name: string;
@@ -26,7 +22,6 @@ export interface UserRFIDRow {
   next_action?: "Entry" | "Exit";
 }
 
-// Entry records table row types
 export interface EntryRecordRow {
   id: string;
   created_at: string;
@@ -37,15 +32,8 @@ export interface EntryRecordRow {
   user_id: string;
 }
 
-// Room table row types (if you have rooms)
 export interface RoomRow {
   id: string;
-  name: string;
-  capacity?: number;
-  location?: string;
-  created_at: string;
-  updated_at: string;
+  location: string;
+  description?: string;
 }
-
-// Add more database row types as needed
-// Example: AdminRow, LogRow, SettingsRow, etc.

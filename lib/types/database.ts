@@ -20,3 +20,10 @@ export interface User {
   created_at?: string;
   nextAction?: string;
 }
+
+export interface Room {
+  id?: string;
+  location: string;
+  created_at?: string;
+  description?: string;
+}
