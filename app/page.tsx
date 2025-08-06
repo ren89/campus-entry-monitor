@@ -1,19 +1,23 @@
 "use client";
 import { useState } from "react";
-import { EntryRecordService, UserService } from "@/lib/services";
-import { useRFIDScanner } from "@/lib/hooks";
+import { EntryRecordService } from "@/lib/services";
+import { useAssignedRoom, useRFIDScanner } from "@/lib/hooks";
 import { EntrySystemCard, EntryToast } from "@/components/features/entry";
 import { formatRfidId } from "@/lib/utils";
 import type { ToastData } from "@/lib/types";
 
 export default function Home() {
   const [toastData, setToastData] = useState<ToastData | null>(null);
+  const { assignedRoom } = useAssignedRoom();
 
   const handleRFIDScan = async (rfidData: string) => {
     try {
       const formattedId = formatRfidId(rfidData);
 
-      const res = await EntryRecordService.create(formattedId);
+      const res = await EntryRecordService.create(
+        formattedId,
+        assignedRoom ?? "Main Entrance"
+      );
 
       if (!res) {
         setToastData({

@@ -1,9 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { Header } from "./Header";
-import { Footer } from "./Footer";
 import { ROUTES } from "@/lib/constants";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -14,7 +12,6 @@ interface LayoutWrapperProps {
 export const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClient();
 
   const isLoginPage = pathname === ROUTES.LOGIN;
   const isAdminPage = pathname === ROUTES.ADMIN;
@@ -36,7 +33,6 @@ export const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
       <div className={`flex-1 ${shouldShow ? "" : "min-h-screen"}`}>
         {children}
       </div>
-      {shouldShow && <Footer />}
       <Toaster />
     </div>
   );

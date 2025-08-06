@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// RFID entry schema
 export const rfidEntrySchema = z.object({
   rfidId: z.string().min(6, "RFID ID must be at least 6 characters"),
   fullName: z.string().optional(),
@@ -8,7 +7,6 @@ export const rfidEntrySchema = z.object({
   avatarUrl: z.string().url().optional().nullable(),
 });
 
-// Toast data schema
 export const toastDataSchema = z.object({
   rfidId: z.string(),
   fullName: z.string().optional(),

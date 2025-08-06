@@ -3,7 +3,6 @@ import { z } from "zod";
 export const USER_TYPES = ["Student", "Staff", "Professor", "Admin"] as const;
 export type UserType = (typeof USER_TYPES)[number];
 
-// Zod schema for user validation
 export const userFormSchema = z.object({
   firstName: z
     .string()
@@ -62,10 +61,8 @@ export const userFormSchema = z.object({
     .regex(/^[A-Za-z0-9]+$/, "RFID can only contain letters and numbers"),
 });
 
-// Infer the type from the schema
 export type UserFormData = z.infer<typeof userFormSchema>;
 
-// Validation function that returns Zod-style errors
 export const validateUserForm = (
   data: UserFormData
 ): {
@@ -90,7 +87,6 @@ export const validateUserForm = (
   return { isValid: false, errors };
 };
 
-// Helper function to validate individual fields
 export const validateField = (
   fieldName: keyof UserFormData,
   value: string | undefined
@@ -110,7 +106,6 @@ export const validateField = (
   }
 };
 
-// For React Hook Form integration
 export const getZodResolver = () => {
   return userFormSchema;
 };
