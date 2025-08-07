@@ -6,3 +6,4 @@ use component from shdcn
 - Card
 
 - Sheet
+- Logo
