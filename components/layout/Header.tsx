@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { APP_CONFIG } from "@/lib/constants";
-
+import Logo from "../shared/Logo";
 interface HeaderProps {
   variant?: "home" | "admin";
   onButtonClick?: () => void;
@@ -19,11 +19,9 @@ export const Header = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-              <span className="text-white font-bold text-sm">
-                {APP_CONFIG.shortName}
-              </span>
-            </div>
+             
+              <Logo />
+            
             <h1 className="text-xl font-bold text-blue-900">
               {APP_CONFIG.name}
             </h1>
