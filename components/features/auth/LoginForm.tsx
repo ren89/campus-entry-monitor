@@ -35,7 +35,7 @@ export const LoginForm = ({ onSubmit }: LoginFormProps) => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
       <div className="max-w-md w-full space-y-8">
         <Card
-          header={<Logo />}
+          header={<Logo size="large" />}
           title={APP_CONFIG.name}
           description="Sign in to your STI account"
           className="border-t-4 border-t-blue-600 shadow-xl"
