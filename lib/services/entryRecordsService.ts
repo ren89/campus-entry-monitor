@@ -1,5 +1,5 @@
 import { createClient } from "../supabase/client";
-import type { EntryRecord, EntryRecordRow } from "../types";
+import type { EntryRecord, EntryRecordRow, RecentEntryRow } from "../types";
 import { UserService } from "./userService";
 
 export class EntryRecordService {
@@ -103,5 +103,32 @@ export class EntryRecordService {
     }
 
     return true;
+  }
+
+  static async getRecentEntries(): Promise<RecentEntryRow[]> {
+    const supabase = createClient();
+
+    const {
+      data: logs,
+      error,
+    }: {
+      data: RecentEntryRow[] | null;
+      error: Error | null;
+    } = await supabase
+      .from("entry_records")
+      .select("name, created_at, location, action")
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    return (
+      logs?.map((log) => {
+        return {
+          created_at: log.created_at,
+          name: log.name,
+          action: log.action,
+          location: log.location,
+        };
+      }) || []
+    );
   }
 }

@@ -1,7 +1,24 @@
-import React from "react";
+import React, { use, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { RecentEntryRow } from "@/lib/types";
+import { EntryRecordService } from "@/lib/services";
+import RecentEntries from "../RecentEntries";
+import { timeAgo } from "@/lib/utils";
 
 export function DashboardScreen() {
+  const [logs, setLogs] = useState<RecentEntryRow[]>([]);
+
+  useEffect(() => {
+    const fetchRecentEntries = async () => {
+      const recentEntries = await EntryRecordService.getRecentEntries();
+      setLogs(recentEntries);
+    };
+
+    fetchRecentEntries();
+  }, []);
+
+  console.log("Recent Logs:", logs);
+
   return (
     <div className="space-y-6">
       <div className="mb-8">
@@ -16,7 +33,7 @@ export function DashboardScreen() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-card-foreground mb-2">
-            Total Entries Today
+            Total Entries
           </h3>
           <p className="text-3xl font-bold text-primary">142</p>
           <p className="text-sm text-muted-foreground mt-1">
@@ -51,27 +68,21 @@ export function DashboardScreen() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-card-foreground mb-4">
+            {/* TODO: Add recent activity chart */}
             Recent Activity
           </h3>
           <div className="space-y-3">
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sm text-card-foreground">
-                Student A entered
-              </span>
-              <span className="text-xs text-muted-foreground">2 min ago</span>
-            </div>
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sm text-card-foreground">
-                Student B exited
-              </span>
-              <span className="text-xs text-muted-foreground">5 min ago</span>
-            </div>
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sm text-card-foreground">
-                Student C entered
-              </span>
-              <span className="text-xs text-muted-foreground">8 min ago</span>
-            </div>
+            {logs.map((log) => (
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-card-foreground">
+                  {log.name} {log.action === "Entry" ? "entered" : "exited"}{" "}
+                  {log.location}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {timeAgo(log.created_at)}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 

@@ -32,6 +32,13 @@ export interface EntryRecordRow {
   user_id: string;
 }
 
+export interface RecentEntryRow {
+  created_at: string;
+  name: string;
+  action: "Entry" | "Exit";
+  location: string;
+}
+
 export interface RoomRow {
   id: string;
   location: string;

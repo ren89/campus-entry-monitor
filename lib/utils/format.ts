@@ -19,3 +19,19 @@ export const formatTimestamp = (dateString: string): string => {
 
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
+
+export const timeAgo = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+
+  if (diffMins < 1) {
+    return "just now";
+  } else if (diffMins < 60) {
+    return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
+  } else {
+    const diffHrs = Math.floor(diffMins / 60);
+    return `${diffHrs} hr${diffHrs === 1 ? "" : "s"} ago`;
+  }
+};
