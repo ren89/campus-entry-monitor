@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "../Calendar";
 
 export function DashboardScreen() {
   return (
@@ -75,22 +76,7 @@ export function DashboardScreen() {
           </div>
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-card-foreground mb-4">
-            Quick Actions
-          </h3>
-          <div className="space-y-3">
-            <Button className="w-full justify-start" variant="outline">
-              📊 View Reports
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              👥 Manage Users
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              ⚙️ System Settings
-            </Button>
-          </div>
-        </div>
+        <Calendar />
       </div>
     </div>
   );
