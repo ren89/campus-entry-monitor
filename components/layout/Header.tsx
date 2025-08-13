@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { APP_CONFIG } from "@/lib/constants";
-import Image from "next/image";
+import Logo from "../shared/Logo";
 interface HeaderProps {
   variant?: "home" | "admin";
   onButtonClick?: () => void;
@@ -19,16 +19,9 @@ export const Header = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <div className= "w-8 h-8 rounded-full overflow-hidden mr-3">
-              <Image
-                 src="/STI.jpg"
-                 alt="STI Logo"
-                 width={32}
-                 height={32}
-                 className="object-cover w-full h-full"
-                unoptimized
-              />
-            </div>
+             
+              <Logo />
+            
             <h1 className="text-xl font-bold text-blue-900">
               {APP_CONFIG.name}
             </h1>
