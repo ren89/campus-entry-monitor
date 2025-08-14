@@ -18,6 +18,17 @@ export default function Home() {
         formattedId,
         assignedRoom ?? "Main Entrance"
       );
+      console.log("Entry record created:", res);
+
+      if (assignedRoom === "Main Entrance" && res?.name && false) {
+        // Temporarily disabled WhatsApp notification
+        handleWhatsAppMessage(
+          `${res?.name} has ${
+            res?.action === "Entry" ? "entered" : "exited"
+          } the campus`,
+          res?.guardian_phone_number || "test"
+        );
+      }
 
       if (!res) {
         setToastData({
@@ -46,6 +57,22 @@ export default function Home() {
 
   const handleToastClose = () => {
     setToastData(null);
+  };
+
+  const handleWhatsAppMessage = async (
+    message: string,
+    guardianPhoneNumber: string
+  ) => {
+    // try {
+    const res = fetch("/api/whatsapp/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: guardianPhoneNumber,
+        // to: "+639959848364",
+        body: message,
+      }),
+    });
   };
 
   useRFIDScanner({ onScan: handleRFIDScan });

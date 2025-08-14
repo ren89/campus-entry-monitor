@@ -86,6 +86,7 @@ export class EntryRecordService {
       created_at: newLog.created_at,
       location: assignedRoom,
       action: newLog.action,
+      guardian_phone_number: user.guardian_phone_number,
     };
   }
 
