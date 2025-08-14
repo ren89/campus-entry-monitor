@@ -149,6 +149,7 @@ export class UserService {
       user_id: data.id,
       rfid: data.rfid,
       action: data.next_action,
+      guardian_phone_number: data.guardian_phone_number,
     };
   }
 

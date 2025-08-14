@@ -6,6 +6,7 @@ export interface EntryRecord {
   action: "Entry" | "Exit";
   location: string;
   user_id: string;
+  guardian_phone_number?: string;
 }
 
 export interface User {
