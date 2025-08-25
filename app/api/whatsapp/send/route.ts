@@ -12,9 +12,9 @@ export async function POST(request: Request) {
     }
     const result = await sendWhatsApp(to, body);
     return NextResponse.json({ success: true, sid: result.sid });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error.message || "Failed to send WhatsApp message" },
+      { error: (error as Error).message || "Failed to send WhatsApp message" },
       { status: 500 }
     );
   }
