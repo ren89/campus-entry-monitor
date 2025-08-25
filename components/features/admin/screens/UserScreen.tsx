@@ -8,6 +8,7 @@ import { useStats } from "@/lib/hooks";
 import { UserForm } from "../UserForm";
 import { UserFormData } from "@/lib/validations/user";
 import { toast } from "sonner";
+import { UserDetails } from "../UserDetails";
 
 export function UserScreen() {
   const [searchFilter, setSearchFilter] = useState("");
@@ -15,6 +16,7 @@ export function UserScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDetails, setIsDetails] = useState(false);
 
   const userStats = useStats({ users, type: "users" });
 
@@ -33,11 +35,13 @@ export function UserScreen() {
   };
 
   const handleEditUser = (user: User) => {
+    setIsDetails(false);
     setSelectedUser(user);
     setIsModalOpen(true);
   };
 
   const handleModalClose = () => {
+    setIsDetails(false);
     setIsModalOpen(false);
     setSelectedUser(null);
   };
@@ -70,6 +74,12 @@ export function UserScreen() {
     }
   };
 
+  const handleViewUser = (user: User) => {
+    setIsDetails(true);
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="mb-8">
@@ -98,22 +108,37 @@ export function UserScreen() {
         onRowClick={handleEditUser}
         globalFilter={searchFilter}
         onGlobalFilterChange={setSearchFilter}
+        onActionClick={handleViewUser}
       />
 
       <Modal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        title={selectedUser ? "Edit User" : "Add New User"}
+        title={
+          isDetails
+            ? "User Details"
+            : selectedUser
+            ? "Edit User"
+            : "Add New User"
+        }
         subtitle={
-          selectedUser ? "Update user information" : "Create a new user account"
+          isDetails
+            ? "View user information"
+            : selectedUser
+            ? "Update user information"
+            : "Create a new user account"
         }
       >
-        <UserForm
-          user={selectedUser || undefined}
-          onSubmit={handleUserSubmit}
-          onCancel={handleModalClose}
-          isLoading={isLoading}
-        />
+        {isDetails ? (
+          <UserDetails user={selectedUser || undefined} />
+        ) : (
+          <UserForm
+            user={selectedUser || undefined}
+            onSubmit={handleUserSubmit}
+            onCancel={handleModalClose}
+            isLoading={isLoading}
+          />
+        )}
       </Modal>
 
       <StatsCards cards={userStats} />

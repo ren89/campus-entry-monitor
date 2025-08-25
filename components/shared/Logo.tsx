@@ -11,10 +11,10 @@ export default function Logo(
         className={`w-${logoSize} h-${logoSize} bg-blue-600 rounded-full flex items-center justify-center overflow-hidden`}
       >
         <Image
-          src="/STI.jpg" // Image should be in the /public folder
+          src="/STI.jpg"
           alt={`${APP_CONFIG.shortName} logo`}
-          width={64} // match w-16 (16 * 4px = 64px)
-          height={64} // match h-16
+          width={size === "small" ? 44 : 64}
+          height={size === "small" ? 44 : 64}
         />
       </div>
     </div>

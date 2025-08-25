@@ -105,4 +105,39 @@ export class EntryRecordService {
 
     return true;
   }
+
+  static async getById(id: string): Promise<Partial<EntryRecord>[]> {
+    const supabase = createClient();
+
+    const {
+      data: logs,
+      error,
+    }: {
+      data: Partial<EntryRecordRow>[] | null;
+      error: Error | null;
+    } = await supabase
+      .from("entry_records")
+      .select("created_at, location, action, user_id")
+      .eq("user_id", id)
+      .order("created_at", { ascending: false });
+
+    if (error || !logs) {
+      console.error("Error fetching entry logs:", error);
+      return [];
+    }
+
+    return (
+      logs?.map((log) => {
+        return {
+          id: log.id,
+          created_at: log.created_at,
+          name: log.name,
+          rfid: log.rfid,
+          action: log.action,
+          location: log.location,
+          user_id: log.user_id,
+        };
+      }) || []
+    );
+  }
 }

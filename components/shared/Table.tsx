@@ -23,6 +23,7 @@ import { formatDateReadable, formatTimestamp } from "@/lib/utils/format";
 export interface DataTableProps<T extends Record<string, any>> {
   data: T[];
   onRowClick?: (row: T, index: number) => void;
+  onActionClick?: (row: T, index: number) => void;
   globalFilter?: string;
   onGlobalFilterChange?: (value: string) => void;
 }
@@ -33,6 +34,7 @@ export function Table<T extends Record<string, any>>({
   onRowClick,
   globalFilter = "",
   onGlobalFilterChange,
+  onActionClick,
 }: DataTableProps<T>) {
   const columns = useMemo<ColumnDef<T>[]>(() => {
     if (data.length === 0) return [];
@@ -152,6 +154,20 @@ export function Table<T extends Record<string, any>>({
                       )}
                     </TableCell>
                   ))}
+                  {onActionClick && (
+                    <TableCell key={"action"}>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onActionClick?.(row.original, row.index);
+                          // You can keep the console log if needed
+                          // console.log("Action clicked");
+                        }}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             ) : (
