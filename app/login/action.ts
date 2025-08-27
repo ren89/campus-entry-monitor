@@ -24,8 +24,29 @@ export async function login(formData: FormData) {
     redirect(`/login?error=${errorMessage}`);
   }
 
-  revalidatePath("/admin", "layout");
-  redirect("/admin");
+  // Get user type from database to determine redirect
+  const { data: userData, error: userError } = await supabase
+    .from("users")
+    .select("user_type")
+    .eq("email", data.email)
+    .single();
+
+  if (userError || !userData) {
+    console.warn("No user found with email:", data.email, userError);
+    const errorMessage = encodeURIComponent(
+      "User profile not found. Please contact administrator."
+    );
+    redirect(`/login?error=${errorMessage}`);
+  }
+
+  // Redirect based on user type
+  if (userData.user_type === "Admin") {
+    revalidatePath("/admin", "layout");
+    redirect("/admin");
+  } else {
+    revalidatePath("/dashboard", "layout");
+    redirect("/dashboard");
+  }
 }
 
 export async function signup(formData: FormData) {

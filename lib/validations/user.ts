@@ -38,18 +38,18 @@ export const userFormSchema = z.object({
     .string()
     .min(1, "Phone number is required")
     .regex(
-      /^09\d{9}$/,
-      "Phone number must be in format 09xxxxxxxxx (11 digits starting with 09)"
+      /^\+639\d{9}$/,
+      "Phone number must be in format +639xxxxxxxxx (13 characters starting with +63)"
     )
-    .length(11, "Phone number must be exactly 11 digits"),
+    .length(13, "Phone number must be exactly 13 characters"),
 
   guardianPhoneNumber: z
     .string()
     .regex(
-      /^09\d{9}$/,
-      "Guardian phone number must be in format 09xxxxxxxxx (11 digits starting with 09)"
+      /^\+639\d{9}$/,
+      "Guardian phone number must be in format +639xxxxxxxxx (13 characters starting with +63)"
     )
-    .length(11, "Guardian phone number must be exactly 11 digits")
+    .length(13, "Guardian phone number must be exactly 13 characters")
     .optional()
     .or(z.literal("")),
 

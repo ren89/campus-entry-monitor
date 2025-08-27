@@ -15,7 +15,8 @@ export const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
 
   const isLoginPage = pathname === ROUTES.LOGIN;
   const isAdminPage = pathname === ROUTES.ADMIN;
-  const shouldShow = !isLoginPage;
+  const isUserPage = pathname === ROUTES.DASHBOARD;
+  const shouldShow = !isLoginPage && !isUserPage;
 
   const handleLoginButton = async () => {
     router.push(ROUTES.LOGIN);

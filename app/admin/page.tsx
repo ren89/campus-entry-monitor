@@ -17,6 +17,7 @@ import {
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [activeScreen, setActiveScreen] = useState<string>(SCREENS.dashboard);
   const supabase = createClient();
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function Admin() {
   ];
 
   useEffect(() => {
-    const getUser = async () => {
+    const checkAdminAccess = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -39,11 +40,28 @@ export default function Admin() {
         return;
       }
 
+      // Check if user is admin in the database
+      const { data: userData, error } = await supabase
+        .from("users")
+        .select("user_type")
+        .eq("email", user.email)
+        .single();
+
+      if (error || !userData || userData.user_type !== "Admin") {
+        console.warn(
+          "Non-admin user attempted to access admin panel:",
+          user.email
+        );
+        router.push(ROUTES.DASHBOARD);
+        return;
+      }
+
       setUser(user);
+      setIsAdmin(true);
       setLoading(false);
     };
 
-    getUser();
+    checkAdminAccess();
 
     const {
       data: { subscription },
@@ -52,8 +70,9 @@ export default function Admin() {
         router.push(ROUTES.HOME);
         return;
       }
-      setUser(session.user);
-      setLoading(false);
+
+      // Re-check admin status when auth state changes
+      checkAdminAccess();
     });
 
     return () => subscription.unsubscribe();
@@ -87,7 +106,7 @@ export default function Admin() {
     );
   }
 
-  if (!user) {
+  if (!user || !isAdmin) {
     return null;
   }
 

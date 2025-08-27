@@ -191,4 +191,39 @@ export class UserService {
 
     return true;
   }
+
+  static async getUserByEmail(email: string): Promise<User | null> {
+    const supabase = createClient();
+
+    const {
+      data,
+      error,
+    }: {
+      data: UserRow | null;
+      error: Error | null;
+    } = await supabase
+      .from("users")
+      .select(
+        "id, first_name, last_name, email, user_type, phone_number, guardian_phone_number, rfid, created_at"
+      )
+      .eq("email", email)
+      .single();
+
+    if (error || !data) {
+      console.warn("No user found with the provided email:", email);
+      return null;
+    }
+
+    return {
+      id: data.id,
+      firstName: data.first_name,
+      lastName: data.last_name,
+      email: data.email,
+      userType: data.user_type,
+      phoneNumber: data.phone_number,
+      guardianPhoneNumber: data.guardian_phone_number,
+      rfid: data.rfid,
+      created_at: data.created_at,
+    };
+  }
 }
