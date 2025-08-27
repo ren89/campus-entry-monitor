@@ -59,6 +59,12 @@ export const userFormSchema = z.object({
     .min(4, "RFID must be at least 4 characters")
     .max(50, "RFID must be less than 50 characters")
     .regex(/^[A-Za-z0-9]+$/, "RFID can only contain letters and numbers"),
+
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .max(100, "Password must be less than 100 characters")
+    .optional(),
 });
 
 export type UserFormData = z.infer<typeof userFormSchema>;

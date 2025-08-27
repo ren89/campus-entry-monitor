@@ -2,7 +2,27 @@ import { createClient } from "../supabase/client";
 import type { EntryRecord, User, UserRow, UserRFIDRow } from "../types";
 import { UserFormData } from "../validations/user";
 
+type UserDataForDB = Omit<UserFormData, "password">;
+
 export class UserService {
+  static async createUserAccount(
+    email: string,
+    password: string
+  ): Promise<void> {
+    const response = await fetch("/api/admin/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to create user account");
+    }
+  }
+
   static async getAll(): Promise<User[]> {
     const supabase = createClient();
 
@@ -39,7 +59,7 @@ export class UserService {
     );
   }
 
-  static async create(userData: UserFormData): Promise<User> {
+  static async create(userData: UserDataForDB): Promise<User> {
     const supabase = createClient();
 
     const {
@@ -80,7 +100,7 @@ export class UserService {
     };
   }
 
-  static async update(id: string, userData: UserFormData): Promise<User> {
+  static async update(id: string, userData: UserDataForDB): Promise<User> {
     const supabase = createClient();
 
     const {

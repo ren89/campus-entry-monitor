@@ -55,8 +55,18 @@ export function UserScreen() {
         toast.success("User updated successfully!");
         console.log("User updated successfully");
       } else {
-        // Create new user
-        await UserService.create(userData);
+        // Create new user - first create auth account, then save user data
+        if (!userData.password) {
+          throw new Error("Password is required for new users");
+        }
+
+        // Create user account first using admin API
+        await UserService.createUserAccount(userData.email, userData.password);
+
+        // Then save user data to database (without password)
+        const { password, ...userDataWithoutPassword } = userData;
+        await UserService.create(userDataWithoutPassword);
+
         toast.success("User created successfully!");
         console.log("User created successfully");
       }

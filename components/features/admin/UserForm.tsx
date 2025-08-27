@@ -33,7 +33,8 @@ export function UserForm({
     userType: user?.userType || "Student",
     phoneNumber: user?.phoneNumber || "",
     guardianPhoneNumber: user?.guardianPhoneNumber || "",
-    rfid: user?.rfid || "",
+    rfid: user?.rfid || "100000",
+    password: "", // Only used for new users
   });
 
   const [errors, setErrors] = useState<
@@ -84,7 +85,17 @@ export function UserForm({
   );
 
   const handleValidation = () => {
-    const validation = validateUserForm(formData);
+    // For new users, password is required
+    const validationData = { ...formData };
+    if (!user && !formData.password) {
+      setErrors((prev) => ({
+        ...prev,
+        password: "Password is required for new users",
+      }));
+      return false;
+    }
+
+    const validation = validateUserForm(validationData);
     setErrors(validation.errors);
     return validation.isValid;
   };
@@ -151,6 +162,26 @@ export function UserForm({
           <p className="text-red-500 text-sm mt-1">{errors.email}</p>
         )}
       </div>
+
+      {/* Password field - only show for new users */}
+      {!user && (
+        <div>
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password || ""}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+            required
+            disabled={isLoading}
+            className={errors.password ? "border-red-500" : ""}
+            placeholder="Enter password for new account"
+          />
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+          )}
+        </div>
+      )}
 
       <div>
         <Select
