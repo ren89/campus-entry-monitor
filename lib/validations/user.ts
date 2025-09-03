@@ -34,22 +34,32 @@ export const userFormSchema = z.object({
     message: "Please select a valid user type",
   }),
 
+  section: z
+    .string()
+    .min(1, "Section is required for students")
+    .max(20, "Section must be less than 20 characters")
+    .regex(
+      /^[A-Za-z0-9\s-]+$/,
+      "Section can only contain letters, numbers, spaces, and hyphens"
+    )
+    .optional()
+    .or(z.literal("")),
+
   phoneNumber: z
     .string()
     .min(1, "Phone number is required")
     .regex(
       /^\+639\d{9}$/,
-      "Phone number must be in format +639xxxxxxxxx (13 characters starting with +63)"
+      "Phone number must be in format +639xxxxxxxxx (13 characters starting with +639)"
     )
     .length(13, "Phone number must be exactly 13 characters"),
 
   guardianPhoneNumber: z
     .string()
-    .regex(
-      /^\+639\d{9}$/,
-      "Guardian phone number must be in format +639xxxxxxxxx (13 characters starting with +63)"
+    .refine(
+      (val) => val === "" || (/^\+639\d{9}$/.test(val) && val.length === 13),
+      "Guardian phone number must be in format +639xxxxxxxxx or empty"
     )
-    .length(13, "Guardian phone number must be exactly 13 characters")
     .optional()
     .or(z.literal("")),
 
@@ -63,19 +73,46 @@ export const userFormSchema = z.object({
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
-    .max(100, "Password must be less than 100 characters")
-    .optional(),
+    .max(100, "Password must be less than 100 characters"),
+
+  avatar: z
+    .string()
+    .url("Avatar must be a valid URL")
+    .optional()
+    .or(z.literal("")),
 });
 
 export type UserFormData = z.infer<typeof userFormSchema>;
 
 export const validateUserForm = (
-  data: UserFormData
+  data: UserFormData,
+  isUpdate: boolean = false
 ): {
   isValid: boolean;
   errors: Partial<Record<keyof UserFormData, string>>;
 } => {
-  const result = userFormSchema.safeParse(data);
+  // Create a copy of the schema for conditional validation
+  let schemaToUse = userFormSchema;
+
+  // If it's an update, make password completely optional (can be empty)
+  if (isUpdate) {
+    schemaToUse = userFormSchema.extend({
+      password: z.string().optional(),
+    }) as unknown as typeof userFormSchema;
+  }
+
+  // If user type is Student, make section required
+  if (data.userType === "Student") {
+    schemaToUse = schemaToUse.refine(
+      (data) => data.section && data.section.trim().length > 0,
+      {
+        message: "Section is required for students",
+        path: ["section"],
+      }
+    );
+  }
+
+  const result = schemaToUse.safeParse(data);
 
   if (result.success) {
     return { isValid: true, errors: {} };

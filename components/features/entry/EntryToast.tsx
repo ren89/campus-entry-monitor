@@ -12,6 +12,7 @@ interface EntryToastProps {
   isError?: boolean;
   errorMessage?: string;
   onClose: () => void;
+  action: "Entry" | "Exit";
 }
 
 export const EntryToast = ({
@@ -22,6 +23,7 @@ export const EntryToast = ({
   avatarUrl,
   isError = false,
   errorMessage,
+  action,
   onClose,
 }: EntryToastProps) => {
   useEffect(() => {
@@ -120,7 +122,7 @@ export const EntryToast = ({
                   isError ? "text-red-600" : "text-green-600"
                 }`}
               >
-                {isError ? "Error!" : "Entry Recorded!"}
+                {isError ? "Error!" : `${action} Recorded!`}
               </motion.h2>
             </div>
 

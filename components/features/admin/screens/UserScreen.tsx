@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, Modal, StatsCards } from "@/components/shared";
 import { User } from "@/lib/types";
-import { UserService } from "@/lib/services";
+import { UserService, StorageService } from "@/lib/services";
 import { useStats } from "@/lib/hooks";
 import { UserForm } from "../UserForm";
 import { UserFormData } from "@/lib/validations/user";
@@ -65,7 +65,37 @@ export function UserScreen() {
 
         // Then save user data to database (without password)
         const { password, ...userDataWithoutPassword } = userData;
-        await UserService.create(userDataWithoutPassword);
+        const avatarFile = (userData as UserFormData & { avatarFile?: File })
+          .avatarFile;
+        const newUser = await UserService.create(userDataWithoutPassword);
+
+        // If there's an avatar file, upload it now that we have the user ID
+        if (avatarFile && newUser.id) {
+          try {
+            const uploadResult = await StorageService.uploadAvatar({
+              file: avatarFile,
+              userId: newUser.id,
+            });
+
+            if (uploadResult.success && uploadResult.url) {
+              // Update the user record with the avatar URL
+              await UserService.update(newUser.id, {
+                ...userDataWithoutPassword,
+                avatar: uploadResult.url,
+              });
+            } else {
+              console.error("Avatar upload failed:", uploadResult.error);
+              toast.error(
+                "User created but avatar upload failed. You can upload it later."
+              );
+            }
+          } catch (avatarError) {
+            console.error("Error uploading avatar:", avatarError);
+            toast.error(
+              "User created but avatar upload failed. You can upload it later."
+            );
+          }
+        }
 
         toast.success("User created successfully!");
         console.log("User created successfully");

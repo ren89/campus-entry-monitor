@@ -5,9 +5,11 @@ export interface UserRow {
   last_name: string;
   email: string;
   user_type: "Student" | "Staff" | "Professor" | "Admin";
+  section?: string;
   phone_number: string;
   guardian_phone_number: string;
   rfid: string;
+  avatar?: string;
   created_at: string;
   next_action?: "Entry" | "Exit";
 }
@@ -19,6 +21,7 @@ export interface UserRFIDRow {
   email: string;
   guardian_phone_number: string;
   rfid: string;
+  avatar?: string;
   created_at: string;
   next_action?: "Entry" | "Exit";
 }

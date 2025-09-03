@@ -18,7 +18,6 @@ export default function Home() {
         formattedId,
         assignedRoom ?? "Main Entrance"
       );
-      console.log("Entry record created:", res);
 
       if (assignedRoom === "Main Entrance" && res?.name && false) {
         // Temporarily disabled WhatsApp notification
@@ -43,6 +42,8 @@ export default function Home() {
         rfidId: formattedId,
         fullName: res?.name,
         room: res?.location,
+        action: res?.action,
+        avatarUrl: res?.avatarUrl,
       });
     } catch (error) {
       setToastData({
@@ -64,7 +65,7 @@ export default function Home() {
     guardianPhoneNumber: string
   ) => {
     // try {
-    const res = fetch("/api/whatsapp/send", {
+    fetch("/api/whatsapp/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -93,6 +94,7 @@ export default function Home() {
         avatarUrl={toastData?.avatarUrl || undefined}
         isError={toastData?.isError}
         errorMessage={toastData?.errorMessage}
+        action={toastData?.action as "Entry" | "Exit"}
         onClose={handleToastClose}
       />
     </>

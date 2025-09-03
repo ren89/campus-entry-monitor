@@ -9,6 +9,8 @@ export interface UserRow {
   rfid: string;
   created_at: string;
   next_action?: "Entry" | "Exit";
+  section?: string;
+  avatar?: string;
 }
 
 export interface UserRFIDRow {
@@ -18,6 +20,7 @@ export interface UserRFIDRow {
   email: string;
   guardian_phone_number: string;
   rfid: string;
+  avatar?: string;
   created_at: string;
   next_action?: "Entry" | "Exit";
 }

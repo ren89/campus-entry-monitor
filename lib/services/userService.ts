@@ -35,7 +35,7 @@ export class UserService {
     } = await supabase
       .from("users")
       .select(
-        "id, first_name, last_name, email, user_type, phone_number, guardian_phone_number, rfid, created_at"
+        "id, first_name, last_name, email, user_type, section, phone_number, guardian_phone_number, rfid, avatar, created_at"
       )
       .order("created_at", { ascending: false });
 
@@ -51,9 +51,11 @@ export class UserService {
         lastName: user.last_name,
         email: user.email,
         userType: user.user_type,
+        section: user.section,
         phoneNumber: user.phone_number,
         guardianPhoneNumber: user.guardian_phone_number,
         rfid: user.rfid,
+        avatar: user.avatar,
         created_at: user.created_at,
       })) || []
     );
@@ -75,9 +77,11 @@ export class UserService {
         last_name: userData.lastName,
         email: userData.email,
         user_type: userData.userType,
+        section: userData.section || null,
         phone_number: userData.phoneNumber,
         guardian_phone_number: userData.guardianPhoneNumber,
         rfid: userData.rfid,
+        avatar: userData.avatar || null,
       })
       .select()
       .single();
@@ -93,9 +97,11 @@ export class UserService {
       lastName: data.last_name,
       email: data.email,
       userType: data.user_type,
+      section: data.section,
       phoneNumber: data.phone_number,
       guardianPhoneNumber: data.guardian_phone_number,
       rfid: data.rfid,
+      avatar: data.avatar,
       created_at: data.created_at,
     };
   }
@@ -116,9 +122,11 @@ export class UserService {
         last_name: userData.lastName,
         email: userData.email,
         user_type: userData.userType,
+        section: userData.section || null,
         phone_number: userData.phoneNumber,
         guardian_phone_number: userData.guardianPhoneNumber,
         rfid: userData.rfid,
+        avatar: userData.avatar || null,
       })
       .eq("id", id)
       .select()
@@ -135,9 +143,11 @@ export class UserService {
       lastName: data.last_name,
       email: data.email,
       userType: data.user_type,
+      section: data.section,
       phoneNumber: data.phone_number,
       guardianPhoneNumber: data.guardian_phone_number,
       rfid: data.rfid,
+      avatar: data.avatar,
       created_at: data.created_at,
     };
   }
@@ -154,7 +164,7 @@ export class UserService {
     } = await supabase
       .from("users")
       .select(
-        "id, first_name, last_name, email, guardian_phone_number, rfid, created_at, next_action"
+        "id, first_name, last_name, email, guardian_phone_number, rfid, avatar, created_at, next_action"
       )
       .eq("rfid", rfid)
       .single();
@@ -170,6 +180,7 @@ export class UserService {
       rfid: data.rfid,
       action: data.next_action,
       guardian_phone_number: data.guardian_phone_number,
+      avatarUrl: data.avatar,
     };
   }
 
@@ -204,7 +215,7 @@ export class UserService {
     } = await supabase
       .from("users")
       .select(
-        "id, first_name, last_name, email, user_type, phone_number, guardian_phone_number, rfid, created_at"
+        "id, first_name, last_name, email, user_type, section, phone_number, guardian_phone_number, rfid, avatar, created_at"
       )
       .eq("email", email)
       .single();
@@ -220,9 +231,11 @@ export class UserService {
       lastName: data.last_name,
       email: data.email,
       userType: data.user_type,
+      section: data.section,
       phoneNumber: data.phone_number,
       guardianPhoneNumber: data.guardian_phone_number,
       rfid: data.rfid,
+      avatar: data.avatar,
       created_at: data.created_at,
     };
   }

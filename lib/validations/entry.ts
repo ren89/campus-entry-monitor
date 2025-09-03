@@ -14,6 +14,7 @@ export const toastDataSchema = z.object({
   avatarUrl: z.string().url().optional().nullable(),
   isError: z.boolean().optional(),
   errorMessage: z.string().optional(),
+  action: z.string().optional(),
 });
 
 export type RfidEntry = z.infer<typeof rfidEntrySchema>;

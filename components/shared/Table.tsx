@@ -41,8 +41,11 @@ export function Table<T extends Record<string, any>>({
 
     return Object.keys(data[0])
       .filter(
-        (key) => key.toLowerCase() !== "id" && key.toLowerCase() !== "user_id"
-      ) // Hide id and user_id columns
+        (key) =>
+          key.toLowerCase() !== "id" &&
+          key.toLowerCase() !== "user_id" &&
+          key.toLowerCase() !== "avatar"
+      ) // Hide id, user_id, and avatar columns
       .map((key) => ({
         accessorKey: key,
         header: key

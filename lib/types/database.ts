@@ -7,6 +7,7 @@ export interface EntryRecord {
   location: string;
   user_id: string;
   guardian_phone_number?: string;
+  avatarUrl?: string;
 }
 
 export interface User {
@@ -15,9 +16,11 @@ export interface User {
   lastName: string;
   email: string;
   userType: "Student" | "Staff" | "Professor" | "Admin";
+  section?: string;
   phoneNumber: string;
   guardianPhoneNumber: string;
   rfid: string;
+  avatar?: string;
   created_at?: string;
   nextAction?: string;
 }

@@ -71,7 +71,7 @@ export class EntryRecordService {
       .select("id, name, created_at, action, location")
       .single();
 
-    const res = UserService.updateNextAction(
+    UserService.updateNextAction(
       rfid,
       newLog?.action === "Entry" ? "Exit" : "Entry"
     );
@@ -87,6 +87,7 @@ export class EntryRecordService {
       location: assignedRoom,
       action: newLog.action,
       guardian_phone_number: user.guardian_phone_number,
+      avatarUrl: user.avatarUrl,
     };
   }
 
