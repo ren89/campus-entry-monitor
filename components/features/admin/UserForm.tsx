@@ -36,7 +36,7 @@ export function UserForm({
     section: user?.section || "",
     phoneNumber: user?.phoneNumber || "",
     guardianPhoneNumber: user?.guardianPhoneNumber || "",
-    rfid: user?.rfid || "20000",
+    rfid: user?.rfid || "",
     password: "", // Only used for new users
     avatar: user?.avatar || "",
   });

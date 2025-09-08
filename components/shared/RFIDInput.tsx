@@ -69,7 +69,7 @@ export default function RFIDInput({
         // Reset buffer after timeout
         rfidTimeout = setTimeout(() => {
           rfidBuffer = "";
-        }, 1000);
+        }, 200);
       }
     };
 
@@ -108,7 +108,7 @@ export default function RFIDInput({
               const timeDiff = now - lastKeyTime;
 
               // Block manual typing (slow keystrokes)
-              if (timeDiff > 100) {
+              if (timeDiff > 100 && lastKeyTime > 0) {
                 e.preventDefault();
               }
 
